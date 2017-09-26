@@ -197,6 +197,7 @@ end
 
 function match_plugin(plugin, plugin_name, msg)
 	if plugin.pre_process then
+		tdcli.sendChatAction(bot.id, 'Typing', 100, dl_cb, nil)
         --If plugin is for privileged users only
 		local result = plugin.pre_process(msg)
 		if result then
@@ -210,6 +211,7 @@ function match_plugin(plugin, plugin_name, msg)
       if is_plugin_disabled_on_chat(plugin_name, msg.chat_id_) then
         return nil
       end
+      		tdcli.sendChatAction(msg.chat_id_, 'Typing', 100, dl_cb, nil)
 			print("Message matches: ", pattern..' | Plugin: '..plugin_name)
 			if plugin.run then
         if not warns_user_not_allowed(plugin, msg) then
@@ -297,6 +299,7 @@ function tdcli_update_callback (data)
 		local d = data.disable_notification_
 		local chat = chats[msg.chat_id_]
 		local hash = 'msgs:'..msg.sender_user_id_..':'..msg.chat_id_
+		tdcli.openChat(msg.chat_id_, dl_cb, nil)
 		redis:incr(hash)
 		if redis:get('markread') == 'on' then
 			tdcli.viewMessages(msg.chat_id_, {[0] = msg.id_}, dl_cb, nil)
